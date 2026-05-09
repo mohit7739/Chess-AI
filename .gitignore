@@ -11,7 +11,7 @@ venv/
 .venv/
 env/
 .env/
-*.pth
+
 
 # Mac
 .DS_Store
