@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useMemo } from 'react'
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import { Chess } from 'chess.js'
 import ChessBoard from './components/ChessBoard'
 import PlayerBar from './components/PlayerBar'
@@ -45,7 +45,38 @@ function App() {
   const [gameResult, setGameResult] = useState(null)
   const [lastMove, setLastMove] = useState(null)
   const [activeMoveIndex, setActiveMoveIndex] = useState(-1)
+  const [whiteTime, setWhiteTime] = useState(600) // 10 minutes
+  const [blackTime, setBlackTime] = useState(600)
   const aiThinking = useRef(false)
+
+  // Timer Effect
+  useEffect(() => {
+    if (status === 'game-over') return
+
+    const interval = setInterval(() => {
+      if (game.turn() === 'w') {
+        setWhiteTime((t) => {
+          if (t <= 1) {
+            setStatus('game-over')
+            setGameResult('0-1 Black wins (Timeout)')
+            return 0
+          }
+          return t - 1
+        })
+      } else {
+        setBlackTime((t) => {
+          if (t <= 1) {
+            setStatus('game-over')
+            setGameResult('1-0 White wins (Timeout)')
+            return 0
+          }
+          return t - 1
+        })
+      }
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [game, status])
 
   const { captured, materialDiff } = useMemo(() => getCapturedPieces(game), [boardPosition])
 
@@ -77,7 +108,7 @@ function App() {
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fen }),
+        body: JSON.stringify({ fen, time_limit: 5.0, max_depth: 10 }),
       })
       if (!res.ok) throw new Error(`API error: ${res.status}`)
 
@@ -159,6 +190,8 @@ function App() {
     setGameResult(null)
     setLastMove(null)
     setActiveMoveIndex(-1)
+    setWhiteTime(600)
+    setBlackTime(600)
     aiThinking.current = false
   }, [])
 
@@ -180,6 +213,7 @@ function App() {
               captured={captured.b}
               materialDiff={materialDiff < 0 ? Math.abs(materialDiff) : 0}
               isThinking={status === 'ai-thinking'}
+              time={blackTime}
             />
 
             {/* Board */}
@@ -198,6 +232,7 @@ function App() {
               captured={captured.w}
               materialDiff={materialDiff > 0 ? materialDiff : 0}
               isBottom
+              time={whiteTime}
             />
           </div>
 

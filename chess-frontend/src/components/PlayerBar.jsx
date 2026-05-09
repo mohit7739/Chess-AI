@@ -15,7 +15,14 @@ export default function PlayerBar({
   materialDiff = 0,
   isBottom = false,
   isThinking = false,
+  time = 600,
 }) {
+  // Format time as MM:SS
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60)
+    const s = seconds % 60
+    return `${m}:${s.toString().padStart(2, '0')}`
+  }
   // Sort captured pieces by value order
   const sortedCaptured = [...captured].sort(
     (a, b) => PIECE_ORDER.indexOf(a) - PIECE_ORDER.indexOf(b)
@@ -93,12 +100,24 @@ export default function PlayerBar({
         )}
         {materialDiff > 0 && (
           <span
-            className="text-xs font-semibold"
+            className="text-xs font-semibold mr-2"
             style={{ color: 'var(--text-secondary)' }}
           >
             +{materialDiff}
           </span>
         )}
+        
+        {/* Timer */}
+        <div 
+          className="flex items-center justify-center font-mono font-bold text-sm px-2.5 py-1 rounded"
+          style={{
+            background: isActive ? 'var(--bg-card-hover)' : 'var(--bg-sidebar)',
+            color: time <= 60 ? 'var(--accent-red)' : isActive ? 'var(--text-bright)' : 'var(--text-secondary)',
+            minWidth: '55px',
+          }}
+        >
+          {formatTime(time)}
+        </div>
       </div>
     </div>
   )

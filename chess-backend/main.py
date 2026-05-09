@@ -329,9 +329,10 @@ def alphabeta(board, depth, alpha, beta, is_white, allow_null=True):
     if tt_score is not None:
         return tt_score
 
-    if board.is_game_over():
+    if board.is_game_over(claim_draw=True):
         if board.is_checkmate():
             return -30000 - depth if board.turn == chess.WHITE else 30000 + depth
+        # Draw score. If engine is winning (eval > 0), it will avoid this.
         return 0
 
     if depth <= 0:

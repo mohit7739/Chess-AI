@@ -43,9 +43,13 @@ export default function ChessBoard({ position, onDrop, lastMove }) {
         if (moveResult) {
           setSelectedSquare(null)
           return
+        } else {
+          // Invalid move (e.g. clicked own piece). Select the new piece.
+          setSelectedSquare(square)
+          return
         }
       }
-      // Same square or invalid move — deselect
+      // Same square — deselect
       setSelectedSquare(null)
       return
     }
