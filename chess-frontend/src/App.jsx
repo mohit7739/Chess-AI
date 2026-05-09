@@ -5,7 +5,8 @@ import PlayerBar from './components/PlayerBar'
 import SidePanel from './components/SidePanel'
 import Header from './components/Header'
 
-const API_URL = 'http://127.0.0.1:8000/api/get-move'
+// Use Vercel environment variable for production, or fallback to local backend
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/get-move'
 
 // Piece values for material calculation
 const PIECE_VALUES = { p: 1, n: 3, b: 3, r: 5, q: 9 }
