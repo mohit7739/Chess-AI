@@ -202,7 +202,7 @@ function App() {
   return (
     <div className="min-h-screen flex" style={{ background: 'var(--bg-page)' }}>
       <main className="flex-1 flex items-center justify-center px-4 py-6 overflow-hidden">
-        <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 animate-slide-up w-full max-w-[1000px] justify-center">
+        <div className="flex flex-col lg:flex-row items-center lg:items-stretch gap-8 animate-slide-up w-full max-w-[1000px] justify-center">
 
           {/* ── Board Column ────────────────────────────── */}
           <div className="flex flex-col" style={{ width: '100%', maxWidth: '640px' }}>
@@ -236,23 +236,21 @@ function App() {
           </div>
 
           {/* ── Side Panel ──────────────────────────────── */}
-          <div className="w-full lg:w-[350px] flex-shrink-0 flex flex-col rounded-md overflow-hidden" style={{ background: 'var(--bg-card)', minHeight: '500px' }}>
-            <SidePanel
-              moves={moveHistory}
-              activeMoveIndex={activeMoveIndex}
-              status={status}
-              gameResult={gameResult}
-              inCheck={game.inCheck()}
-              turn={game.turn()}
-              onNewGame={resetGame}
-              goFirst={goFirst}
-              goPrev={goPrev}
-              goNext={goNext}
-              goLast={goLast}
-              goToMove={goToMove}
-              onResign={resignGame}
-            />
-          </div>
+          <SidePanel
+            moves={moveHistory}
+            activeMoveIndex={activeMoveIndex}
+            status={status}
+            gameResult={gameResult}
+            inCheck={game.inCheck()}
+            turn={game.turn()}
+            onNewGame={resetGame}
+            goFirst={goFirst}
+            goPrev={goPrev}
+            goNext={goNext}
+            goLast={goLast}
+            goToMove={goToMove}
+            onResign={resignGame}
+          />
         </div>
       </main>
     </div>

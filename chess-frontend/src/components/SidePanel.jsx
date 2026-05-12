@@ -36,9 +36,10 @@ export default function SidePanel({
 
   return (
     <div
-      className="flex flex-col w-full h-full"
+      className="w-full lg:w-[350px] flex-shrink-0 flex flex-col rounded-md overflow-hidden"
       style={{
-        background: 'var(--bg-sidebar)',
+        background: 'var(--bg-card)',
+        minHeight: '500px',
       }}
     >
       {/* ── Top bar ─────────────────────────────────── */}
