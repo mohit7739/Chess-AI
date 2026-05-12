@@ -201,18 +201,20 @@ function App() {
   const goNext = useCallback(() => goToMove(Math.min(moveHistory.length - 1, activeMoveIndex + 1)), [goToMove, activeMoveIndex, moveHistory])
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-page)' }}>
-      <Header />
+    <div className="min-h-screen flex" style={{ background: 'var(--bg-page)' }}>
+      {/* ── Left Sidebar (Header converted to vertical) ──────────────── */}
+      <div className="w-[140px] md:w-[200px] flex-shrink-0 border-r" style={{ background: 'var(--bg-sidebar)', borderColor: 'var(--border-default)' }}>
+        <Header />
+      </div>
 
-      <main className="flex-1 flex items-center justify-center px-3 py-4">
-        <div className="flex flex-col lg:flex-row items-center lg:items-stretch gap-0 animate-slide-up">
+      <main className="flex-1 flex items-center justify-center px-4 py-6 overflow-hidden">
+        <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 animate-slide-up w-full max-w-[1200px] justify-center">
 
           {/* ── Board Column ────────────────────────────── */}
-          <div className="flex flex-col" style={{ width: '520px', maxWidth: '90vw' }}>
-            {/* Opponent (Black) player bar */}
+          <div className="flex flex-col" style={{ width: '100%', maxWidth: '640px' }}>
             <PlayerBar
-              name="Chess Engine"
-              subtitle="AI"
+              name="Chess Engine Bot"
+              subtitle="AI (2500)"
               color="b"
               isActive={game.turn() === 'b'}
               captured={captured.b}
@@ -220,16 +222,16 @@ function App() {
               isThinking={status === 'ai-thinking'}
             />
 
-            {/* Board */}
-            <ChessBoard
-              position={boardPosition}
-              onDrop={onDrop}
-              lastMove={lastMove}
-            />
+            <div className="rounded-sm overflow-hidden" style={{ boxShadow: '0 4px 14px rgba(0,0,0,0.5)' }}>
+              <ChessBoard
+                position={boardPosition}
+                onDrop={onDrop}
+                lastMove={lastMove}
+              />
+            </div>
 
-            {/* You (White) player bar */}
             <PlayerBar
-              name="You"
+              name="Guest"
               subtitle="Player"
               color="w"
               isActive={game.turn() === 'w' && status !== 'game-over'}
@@ -240,21 +242,23 @@ function App() {
           </div>
 
           {/* ── Side Panel ──────────────────────────────── */}
-          <SidePanel
-            moves={moveHistory}
-            activeMoveIndex={activeMoveIndex}
-            status={status}
-            gameResult={gameResult}
-            inCheck={game.inCheck()}
-            turn={game.turn()}
-            onNewGame={resetGame}
-            goFirst={goFirst}
-            goPrev={goPrev}
-            goNext={goNext}
-            goLast={goLast}
-            goToMove={goToMove}
-            onResign={resignGame}
-          />
+          <div className="w-full lg:w-[350px] flex-shrink-0 flex flex-col rounded-md overflow-hidden" style={{ background: 'var(--bg-card)', minHeight: '500px' }}>
+            <SidePanel
+              moves={moveHistory}
+              activeMoveIndex={activeMoveIndex}
+              status={status}
+              gameResult={gameResult}
+              inCheck={game.inCheck()}
+              turn={game.turn()}
+              onNewGame={resetGame}
+              goFirst={goFirst}
+              goPrev={goPrev}
+              goNext={goNext}
+              goLast={goLast}
+              goToMove={goToMove}
+              onResign={resignGame}
+            />
+          </div>
         </div>
       </main>
     </div>

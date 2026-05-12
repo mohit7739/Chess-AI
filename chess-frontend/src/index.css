@@ -2,39 +2,37 @@
 
 /* ── Modern Chess Design System ───────────────────────────────────── */
 :root {
-  --bg-page: #0f0f0f;
-  --bg-sidebar: #181818;
-  --bg-sidebar-alt: #222222;
-  --bg-card: #1a1a1a;
-  --bg-card-hover: #252525;
-  --bg-board-frame: #111111;
-  --bg-input: #141414;
+  --bg-page: #302e2b;
+  --bg-sidebar: #262421;
+  --bg-sidebar-alt: #211f1c;
+  --bg-card: #262421;
+  --bg-card-hover: #322e2b;
+  
+  --bg-player-bar: transparent;
+  --bg-player-bar-active: transparent;
 
-  --bg-player-bar: #161616;
-  --bg-player-bar-active: #1c1c1c;
-
-  --sq-light: #eeeed2;
-  --sq-dark: #769656;
+  --sq-light: #ebecd0;
+  --sq-dark: #739552;
   --sq-light-highlight: #f6f669;
   --sq-dark-highlight: #baca2b;
 
-  --text-primary: #e4e4e4;
-  --text-secondary: #8a8a8a;
-  --text-muted: #555555;
+  --text-primary: #fff;
+  --text-secondary: #c3c2c1;
+  --text-muted: #8c8a88;
   --text-bright: #ffffff;
 
-  --accent-green: #7fba3c;
-  --accent-green-hover: #8ecc48;
+  --accent-green: #81b64c;
+  --accent-green-hover: #95c85d;
   --accent-orange: #e09430;
   --accent-red: #d95555;
   --accent-blue: #5a9fd4;
 
-  --border-default: rgba(255, 255, 255, 0.06);
-  --border-strong: rgba(255, 255, 255, 0.1);
+  --border-default: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.15);
 
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
 }
 
 /* ── Base ──────────────────────────────────────────────────────────── */

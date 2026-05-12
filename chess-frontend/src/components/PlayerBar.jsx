@@ -21,13 +21,9 @@ export default function PlayerBar({
 
   return (
     <div
-      className="flex items-center justify-between px-3.5 py-2.5"
+      className="flex items-center justify-between px-1 py-2.5"
       style={{
-        background: isActive ? 'var(--bg-player-bar-active)' : 'var(--bg-player-bar)',
-        borderRadius: isBottom
-          ? '0 0 var(--radius-lg) var(--radius-lg)'
-          : 'var(--radius-lg) var(--radius-lg) 0 0',
-        borderLeft: isActive ? '3px solid var(--accent-green)' : '3px solid transparent',
+        background: 'transparent',
         transition: 'all 0.25s ease',
         minHeight: '44px',
       }}
