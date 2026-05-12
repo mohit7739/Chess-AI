@@ -18,10 +18,30 @@ export default function ChessBoard({ position, onDrop, lastMove }) {
     }
   }
 
-  // Highlight selected square
+  // Highlight selected square and its legal moves
   if (selectedSquare) {
     squareStyles[selectedSquare] = {
+      ...squareStyles[selectedSquare],
       background: 'rgba(255, 255, 0, 0.4)',
+    }
+
+    try {
+      const g = new Chess(position)
+      const moves = g.moves({ square: selectedSquare, verbose: true })
+      
+      moves.forEach((move) => {
+        const isCapture = g.get(move.to) !== null || (g.get(selectedSquare).type === 'p' && move.to[0] !== selectedSquare[0]) // capture or en passant
+        
+        squareStyles[move.to] = {
+          ...squareStyles[move.to],
+          background: isCapture
+            ? 'radial-gradient(circle, transparent 60%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.25) 75%, transparent 75%)'
+            : 'radial-gradient(circle, rgba(0,0,0,0.25) 18%, transparent 18%)',
+          cursor: 'pointer',
+        }
+      })
+    } catch (e) {
+      // Ignore errors if position is invalid
     }
   }
 
