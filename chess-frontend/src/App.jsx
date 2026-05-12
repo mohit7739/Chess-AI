@@ -41,10 +41,12 @@ function App() {
   const [game, setGame] = useState(new Chess())
   const [boardPosition, setBoardPosition] = useState(game.fen())
   const [moveHistory, setMoveHistory] = useState([])
+  const [fenHistory, setFenHistory] = useState([new Chess().fen()]) // track every position
   const [status, setStatus] = useState('your-turn')
   const [gameResult, setGameResult] = useState(null)
   const [lastMove, setLastMove] = useState(null)
   const [activeMoveIndex, setActiveMoveIndex] = useState(-1)
+  const [isViewingHistory, setIsViewingHistory] = useState(false)
   const aiThinking = useRef(false)
 
   const { captured, materialDiff } = useMemo(() => getCapturedPieces(game), [boardPosition])
@@ -99,6 +101,7 @@ function App() {
         const result = g.move({ from, to, promotion })
         if (result) {
           setBoardPosition(g.fen())
+          setFenHistory((h) => [...h, g.fen()])
           setMoveHistory((h) => {
             const next = [...h, { color: 'b', san: result.san, from, to }]
             setActiveMoveIndex(next.length - 1)
@@ -119,18 +122,15 @@ function App() {
   }, [updateStatus])
 
   const onDrop = useCallback((sourceSquare, targetSquare, piece) => {
-    if (status === 'ai-thinking' || status === 'game-over') return false
+    if (status === 'ai-thinking' || status === 'game-over' || isViewingHistory) return false
 
     const g = new Chess(game.fen())
 
-    // Detect promotion: check piece param (drag-and-drop) or the piece on the source square (click-to-move)
     let isPromotion = false
     if (piece) {
-      // piece is like 'wP' or 'bP'
       const pieceType = typeof piece === 'string' ? piece : piece?.pieceType
       isPromotion = pieceType?.[1] === 'P' && (targetSquare[1] === '8' || targetSquare[1] === '1')
     } else {
-      // Click-to-move: check what's on the source square
       const srcPiece = g.get(sourceSquare)
       isPromotion = srcPiece?.type === 'p' && (targetSquare[1] === '8' || targetSquare[1] === '1')
     }
@@ -141,6 +141,7 @@ function App() {
 
     setGame(g)
     setBoardPosition(g.fen())
+    setFenHistory((h) => [...h, g.fen()])
     setMoveHistory((h) => {
       const next = [...h, { color: 'w', san: move.san, from: sourceSquare, to: targetSquare }]
       setActiveMoveIndex(next.length - 1)
@@ -154,19 +155,44 @@ function App() {
     }
 
     return true
-  }, [game, status, requestAIMove, updateStatus])
+  }, [game, status, isViewingHistory, requestAIMove, updateStatus])
 
   const resetGame = useCallback(() => {
     const g = new Chess()
     setGame(g)
     setBoardPosition(g.fen())
     setMoveHistory([])
+    setFenHistory([g.fen()])
     setStatus('your-turn')
     setGameResult(null)
     setLastMove(null)
     setActiveMoveIndex(-1)
+    setIsViewingHistory(false)
     aiThinking.current = false
   }, [])
+
+  // ── Move Navigation ─────────────────────────────
+  const goToMove = useCallback((idx) => {
+    // idx = -1 means starting position, 0 = after first move, etc.
+    const fenIdx = idx + 1 // fenHistory[0] is starting position
+    if (fenIdx >= 0 && fenIdx < fenHistory.length) {
+      setBoardPosition(fenHistory[fenIdx])
+      setActiveMoveIndex(idx)
+      const atLatest = fenIdx === fenHistory.length - 1
+      setIsViewingHistory(!atLatest)
+      if (idx >= 0) {
+        const m = moveHistory[idx]
+        if (m) setLastMove({ from: m.from, to: m.to })
+      } else {
+        setLastMove(null)
+      }
+    }
+  }, [fenHistory, moveHistory])
+
+  const goFirst = useCallback(() => goToMove(-1), [goToMove])
+  const goLast = useCallback(() => goToMove(moveHistory.length - 1), [goToMove, moveHistory])
+  const goPrev = useCallback(() => goToMove(Math.max(-1, activeMoveIndex - 1)), [goToMove, activeMoveIndex])
+  const goNext = useCallback(() => goToMove(Math.min(moveHistory.length - 1, activeMoveIndex + 1)), [goToMove, activeMoveIndex, moveHistory])
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-page)' }}>
@@ -216,6 +242,11 @@ function App() {
             inCheck={game.inCheck()}
             turn={game.turn()}
             onNewGame={resetGame}
+            goFirst={goFirst}
+            goPrev={goPrev}
+            goNext={goNext}
+            goLast={goLast}
+            goToMove={goToMove}
           />
         </div>
       </main>

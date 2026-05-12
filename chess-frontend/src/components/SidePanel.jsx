@@ -8,6 +8,11 @@ export default function SidePanel({
   inCheck,
   turn,
   onNewGame,
+  goFirst,
+  goPrev,
+  goNext,
+  goLast,
+  goToMove,
 }) {
   const scrollRef = useRef(null)
 
@@ -87,12 +92,14 @@ export default function SidePanel({
                 <span
                   className={`flex-1 text-[12px] font-mono font-medium move-cell ${pair.whiteIdx === activeMoveIndex ? 'active' : ''}`}
                   style={pair.whiteIdx !== activeMoveIndex ? { color: 'var(--text-primary)' } : {}}
+                  onClick={() => goToMove(pair.whiteIdx)}
                 >
                   {pair.white?.san || ''}
                 </span>
                 <span
                   className={`flex-1 text-[12px] font-mono font-medium move-cell ${pair.blackIdx === activeMoveIndex ? 'active' : ''}`}
                   style={pair.blackIdx !== activeMoveIndex ? { color: 'var(--text-primary)' } : {}}
+                  onClick={() => pair.black && goToMove(pair.blackIdx)}
                 >
                   {pair.black?.san || ''}
                 </span>
@@ -123,6 +130,22 @@ export default function SidePanel({
           {gameResult}
         </div>
       )}
+
+      {/* ── Move Navigation Bar ────────────────────────── */}
+      <div className="flex items-center justify-between px-3 py-2" style={{ borderTop: '1px solid var(--border-strong)', background: 'var(--bg-sidebar-alt)' }}>
+        <button className="btn btn-secondary flex-1" style={{ padding: '6px', border: 'none', background: 'transparent' }} onClick={goFirst} title="First Move">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
+        </button>
+        <button className="btn btn-secondary flex-1" style={{ padding: '6px', border: 'none', background: 'transparent' }} onClick={goPrev} title="Previous Move">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="15 18 9 12 15 6 15 18"></polygon></svg>
+        </button>
+        <button className="btn btn-secondary flex-1" style={{ padding: '6px', border: 'none', background: 'transparent' }} onClick={goNext} title="Next Move">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="9 18 15 12 9 6 9 18"></polygon></svg>
+        </button>
+        <button className="btn btn-secondary flex-1" style={{ padding: '6px', border: 'none', background: 'transparent' }} onClick={goLast} title="Last Move">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+        </button>
+      </div>
 
       {/* ── Controls ───────────────────────────────────── */}
       <div
