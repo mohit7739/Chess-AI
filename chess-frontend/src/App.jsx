@@ -171,6 +171,12 @@ function App() {
     aiThinking.current = false
   }, [])
 
+  const resignGame = useCallback(() => {
+    if (status === 'game-over') return
+    setStatus('game-over')
+    setGameResult('0-1 (White resigned)')
+  }, [status])
+
   // ── Move Navigation ─────────────────────────────
   const goToMove = useCallback((idx) => {
     // idx = -1 means starting position, 0 = after first move, etc.
@@ -247,6 +253,7 @@ function App() {
             goNext={goNext}
             goLast={goLast}
             goToMove={goToMove}
+            onResign={resignGame}
           />
         </div>
       </main>

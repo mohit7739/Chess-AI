@@ -13,6 +13,7 @@ export default function SidePanel({
   goNext,
   goLast,
   goToMove,
+  onResign,
 }) {
   const scrollRef = useRef(null)
 
@@ -181,6 +182,7 @@ export default function SidePanel({
           className="btn btn-danger"
           title="Resign"
           style={{ padding: '9px 11px' }}
+          onClick={onResign}
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
