@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import chess, torch, numpy as np, torch.nn as nn, os, random
+import chess, torch, numpy as np, torch.nn as nn, os, random, time
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
@@ -217,8 +217,17 @@ def quiescence(b,a,bt,maximizing,d=0):
         return bt
 
 nodes=0
+stop_search=False
+search_start=0
+MAX_SEARCH_TIME=10.0
+
 def alphabeta(b,d,a,bt,mx,null_ok=True):
-    global nodes; nodes+=1
+    global nodes, stop_search
+    nodes+=1
+    # Check time every 1024 nodes
+    if nodes & 1023 == 0 and time.time()-search_start > MAX_SEARCH_TIME:
+        stop_search=True
+    if stop_search: return 0
     ts,tm=tt_lookup(b,d,a,bt)
     if ts is not None: return ts
 
@@ -314,20 +323,25 @@ def alphabeta(b,d,a,bt,mx,null_ok=True):
         else: tt_store(b,d,me,TT_EXACT,bm)
         return me
 
-def find_best_move(board, max_depth=20):
-    global nodes; nodes=0
+def find_best_move(board, max_depth=12):
+    global nodes, stop_search, search_start
+    nodes=0; stop_search=False; search_start=time.time()
     killer_moves.clear(); history_table.clear()
     is_w=board.turn==chess.WHITE; best=None; best_s=None
 
     for depth in range(1, max_depth+1):
+        if stop_search or time.time()-search_start > MAX_SEARCH_TIME*0.6:
+            break
         a=-99999; bt=99999; cb=None
         cs=-99999 if is_w else 99999
         moves=ordered_moves(board,best,depth)
 
         for m in moves:
+            if stop_search: break
             board.push(m)
             s=alphabeta(board,depth-1,a,bt,not is_w)
             board.pop()
+            if stop_search: break
             if is_w:
                 if s>cs: cs=s; cb=m
                 a=max(a,s)
@@ -335,14 +349,15 @@ def find_best_move(board, max_depth=20):
                 if s<cs: cs=s; cb=m
                 bt=min(bt,s)
 
-        if cb: best=cb; best_s=cs
-        print(f"  d{depth}: {best.uci() if best else '?'} ({best_s:.0f}) [{nodes}n]")
+        if not stop_search and cb:
+            best=cb; best_s=cs
+        elapsed=time.time()-search_start
+        print(f"  d{depth}: {best.uci() if best else '?'} ({best_s:.0f if best_s else 0}) [{nodes}n, {elapsed:.1f}s]")
 
-        # Stop conditions: found checkmate or deep enough
-        if best_s and(best_s>29000 or best_s<-29000): break
-        if depth>=6 and nodes>500000: break
-        if depth>=8 and nodes>200000: break
-        if depth>=10 and nodes>100000: break
+        # Stop conditions
+        if best_s is not None and(best_s>29000 or best_s<-29000): break
+        if depth>=5 and nodes>100000: break
+        if depth>=7 and nodes>50000: break
 
     return best, best_s
 
