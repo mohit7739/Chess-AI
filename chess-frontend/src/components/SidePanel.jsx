@@ -17,7 +17,6 @@ export default function SidePanel({
     }
   }, [moves])
 
-  // Group moves into pairs
   const pairs = []
   for (let i = 0; i < moves.length; i += 2) {
     pairs.push({
@@ -31,73 +30,66 @@ export default function SidePanel({
 
   return (
     <div
-      className="flex flex-col w-full lg:w-[340px]"
+      className="flex flex-col w-full lg:w-[320px]"
       style={{
         background: 'var(--bg-sidebar)',
         borderRadius: '0 var(--radius-lg) var(--radius-lg) 0',
         borderLeft: '1px solid var(--border-default)',
       }}
     >
-      {/* ── Top bar: game info ───────────────────────── */}
+      {/* ── Top bar ─────────────────────────────────── */}
       <div
         className="flex items-center justify-between px-4 py-3"
         style={{ borderBottom: '1px solid var(--border-default)' }}
       >
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
-            ⚡ vs Computer
-          </span>
-        </div>
+        <span className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+          vs Computer
+        </span>
         <div className="flex items-center gap-1.5">
           {status === 'ai-thinking' && (
             <span
-              className="text-[10px] px-2 py-0.5 rounded font-medium"
-              style={{ background: 'rgba(92, 155, 213, 0.12)', color: 'var(--accent-blue)' }}
+              className="text-[10px] px-2 py-0.5 rounded-md font-medium"
+              style={{ background: 'rgba(90, 159, 212, 0.1)', color: 'var(--accent-blue)' }}
             >
-              Thinking...
+              Thinking…
             </span>
           )}
           {inCheck && status !== 'game-over' && (
             <span
-              className="text-[10px] px-2 py-0.5 rounded font-semibold"
-              style={{ background: 'rgba(224, 85, 85, 0.12)', color: 'var(--accent-red)' }}
+              className="text-[10px] px-2 py-0.5 rounded-md font-semibold"
+              style={{ background: 'rgba(217, 85, 85, 0.1)', color: 'var(--accent-red)' }}
             >
-              Check!
+              Check
             </span>
           )}
         </div>
       </div>
 
-      {/* ── Move history ─────────────────────────────── */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-1 py-1">
+      {/* ── Move history ──────────────────────────────── */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-1.5 py-1.5" style={{ minHeight: '200px' }}>
         {pairs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full py-12 gap-2">
-            <span className="text-2xl opacity-30">♟</span>
-            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+          <div className="flex flex-col items-center justify-center h-full py-14 gap-2.5">
+            <span className="text-3xl opacity-15">♟</span>
+            <p className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
               Make your first move
             </p>
           </div>
         ) : (
           <div>
             {pairs.map((pair) => (
-              <div key={pair.number} className="flex items-center move-row" style={{ minHeight: '28px' }}>
-                {/* Move number */}
+              <div key={pair.number} className="flex items-center move-row" style={{ minHeight: '30px' }}>
                 <span
-                  className="w-9 text-right pr-2 text-[11px] font-medium shrink-0"
+                  className="w-8 text-right pr-2 text-[11px] font-medium shrink-0"
                   style={{ color: 'var(--text-muted)' }}
                 >
                   {pair.number}.
                 </span>
-
-                {/* White move */}
                 <span
                   className={`flex-1 text-[12px] font-mono font-medium move-cell ${pair.whiteIdx === activeMoveIndex ? 'active' : ''}`}
                   style={pair.whiteIdx !== activeMoveIndex ? { color: 'var(--text-primary)' } : {}}
                 >
                   {pair.white?.san || ''}
                 </span>
-
-                {/* Black move */}
                 <span
                   className={`flex-1 text-[12px] font-mono font-medium move-cell ${pair.blackIdx === activeMoveIndex ? 'active' : ''}`}
                   style={pair.blackIdx !== activeMoveIndex ? { color: 'var(--text-primary)' } : {}}
@@ -110,16 +102,16 @@ export default function SidePanel({
         )}
       </div>
 
-      {/* ── Game result banner ────────────────────────── */}
+      {/* ── Game result ────────────────────────────────── */}
       {gameResult && (
         <div
-          className="mx-3 mb-2 py-2.5 px-3 rounded-md text-center text-sm font-bold animate-fade-in"
+          className="mx-3 mb-2.5 py-3 px-4 rounded-lg text-center text-sm font-bold animate-fade-in"
           style={{
             background: gameResult.startsWith('1-0')
-              ? 'rgba(129, 182, 76, 0.12)'
+              ? 'rgba(127, 186, 60, 0.1)'
               : gameResult.startsWith('0-1')
-                ? 'rgba(224, 85, 85, 0.12)'
-                : 'rgba(255, 255, 255, 0.06)',
+                ? 'rgba(217, 85, 85, 0.1)'
+                : 'rgba(255, 255, 255, 0.04)',
             color: gameResult.startsWith('1-0')
               ? 'var(--accent-green)'
               : gameResult.startsWith('0-1')
@@ -132,7 +124,7 @@ export default function SidePanel({
         </div>
       )}
 
-      {/* ── Controls ─────────────────────────────────── */}
+      {/* ── Controls ───────────────────────────────────── */}
       <div
         className="px-3 py-3 flex items-center gap-2"
         style={{ borderTop: '1px solid var(--border-default)' }}
@@ -142,7 +134,7 @@ export default function SidePanel({
           className="btn btn-primary flex-1"
           onClick={onNewGame}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="23 4 23 10 17 10" />
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
           </svg>
@@ -152,9 +144,9 @@ export default function SidePanel({
         <button
           className="btn btn-secondary"
           title="Flip board"
-          style={{ padding: '8px 10px' }}
+          style={{ padding: '9px 11px' }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="17 1 21 5 17 9" />
             <path d="M3 11V9a4 4 0 0 1 4-4h14" />
             <polyline points="7 23 3 19 7 15" />
@@ -165,9 +157,9 @@ export default function SidePanel({
         <button
           className="btn btn-danger"
           title="Resign"
-          style={{ padding: '8px 10px' }}
+          style={{ padding: '9px 11px' }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
             <line x1="4" y1="22" x2="4" y2="15" />
           </svg>

@@ -1,53 +1,44 @@
 @import "tailwindcss";
 
-/* ── Chess.com-inspired Design System ──────────────────────────────── */
+/* ── Modern Chess Design System ───────────────────────────────────── */
 :root {
-  /* Core backgrounds — chess.com dark palette */
-  --bg-page: #262421;
-  --bg-sidebar: #302e2b;
-  --bg-sidebar-alt: #3c3a36;
-  --bg-card: #272522;
-  --bg-card-hover: #383633;
-  --bg-board-frame: #1d1b18;
-  --bg-input: #1a1917;
+  --bg-page: #0f0f0f;
+  --bg-sidebar: #181818;
+  --bg-sidebar-alt: #222222;
+  --bg-card: #1a1a1a;
+  --bg-card-hover: #252525;
+  --bg-board-frame: #111111;
+  --bg-input: #141414;
 
-  /* Player bar */
-  --bg-player-bar: #1d1b18;
-  --bg-player-bar-active: #272522;
+  --bg-player-bar: #161616;
+  --bg-player-bar-active: #1c1c1c;
 
-  /* Board colors */
-  --sq-light: #ebecd0;
-  --sq-dark: #779556;
-  --sq-light-highlight: #f5f682;
-  --sq-dark-highlight: #bbcc44;
+  --sq-light: #eeeed2;
+  --sq-dark: #769656;
+  --sq-light-highlight: #f6f669;
+  --sq-dark-highlight: #baca2b;
 
-  /* Text */
-  --text-primary: #e8e6e3;
-  --text-secondary: #9b9895;
-  --text-muted: #6b6966;
+  --text-primary: #e4e4e4;
+  --text-secondary: #8a8a8a;
+  --text-muted: #555555;
   --text-bright: #ffffff;
 
-  /* Accents */
-  --accent-green: #81b64c;
-  --accent-green-hover: #96c964;
-  --accent-orange: #e58f2a;
-  --accent-red: #e05555;
-  --accent-blue: #5c9bd5;
+  --accent-green: #7fba3c;
+  --accent-green-hover: #8ecc48;
+  --accent-orange: #e09430;
+  --accent-red: #d95555;
+  --accent-blue: #5a9fd4;
 
-  /* Borders */
-  --border-default: rgba(255, 255, 255, 0.05);
+  --border-default: rgba(255, 255, 255, 0.06);
   --border-strong: rgba(255, 255, 255, 0.1);
 
-  /* Misc */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 }
 
-/* ── Base Resets ────────────────────────────────────────────────────── */
-*,
-*::before,
-*::after {
+/* ── Base ──────────────────────────────────────────────────────────── */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -56,7 +47,6 @@
 html {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   font-size: 14px;
 }
 
@@ -67,66 +57,48 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Scrollbar (chess.com-style thin) ──────────────────────────────── */
-::-webkit-scrollbar {
-  width: 5px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
+/* ── Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
-/* ── Utility: Monospace font ───────────────────────────────────────── */
 .font-mono {
   font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
 }
 
-/* ── Animations ────────────────────────────────────────────────────── */
+/* ── Animations ───────────────────────────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 @keyframes pulse-dot {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
 }
-
 @keyframes thinking-dots {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
+  0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 4px rgba(127, 186, 60, 0.3); }
+  50% { box-shadow: 0 0 12px rgba(127, 186, 60, 0.5); }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out both;
-}
+.animate-fade-in { animation: fadeIn 0.3s ease-out both; }
+.animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
-.animate-slide-up {
-  animation: slideUp 0.4s ease-out both;
-}
-
-/* ── Button base ───────────────────────────────────────────────────── */
+/* ── Buttons ──────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: 9px 18px;
   border: none;
   border-radius: var(--radius-md);
   font-weight: 600;
@@ -134,62 +106,50 @@ body {
   cursor: pointer;
   transition: all 0.15s ease;
   user-select: none;
+  letter-spacing: 0.01em;
 }
-
-.btn:active {
-  transform: scale(0.97);
-}
+.btn:active { transform: scale(0.97); }
 
 .btn-primary {
   background: var(--accent-green);
   color: #fff;
 }
-.btn-primary:hover {
-  background: var(--accent-green-hover);
-}
+.btn-primary:hover { background: var(--accent-green-hover); }
 
 .btn-secondary {
   background: var(--bg-sidebar-alt);
   color: var(--text-primary);
+  border: 1px solid var(--border-default);
 }
-.btn-secondary:hover {
-  background: var(--bg-card-hover);
-}
+.btn-secondary:hover { background: var(--bg-card-hover); }
 
 .btn-danger {
-  background: rgba(224, 85, 85, 0.15);
+  background: rgba(217, 85, 85, 0.1);
   color: var(--accent-red);
+  border: 1px solid rgba(217, 85, 85, 0.15);
 }
-.btn-danger:hover {
-  background: rgba(224, 85, 85, 0.25);
-}
+.btn-danger:hover { background: rgba(217, 85, 85, 0.2); }
 
-/* ── Move history row highlight ────────────────────────────────────── */
-.move-row:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
+/* ── Move History ─────────────────────────────────────────────────── */
+.move-row:hover { background: rgba(255, 255, 255, 0.02); }
 
 .move-cell {
   cursor: pointer;
-  border-radius: 3px;
-  padding: 3px 6px;
-  transition: background 0.1s;
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  transition: background 0.12s;
 }
-
-.move-cell:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
+.move-cell:hover { background: rgba(255, 255, 255, 0.06); }
 .move-cell.active {
   background: var(--accent-green);
   color: #fff;
-  border-radius: 3px;
+  font-weight: 600;
 }
 
-/* ── Captured pieces ───────────────────────────────────────────────── */
+/* ── Captured Pieces ──────────────────────────────────────────────── */
 .captured-piece {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1;
-  opacity: 0.85;
-  margin-right: -2px;
+  opacity: 0.75;
+  margin-right: -1px;
 }

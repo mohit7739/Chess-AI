@@ -9,27 +9,29 @@ export default function Header() {
     >
       <div className="flex items-center gap-2.5">
         {/* Logo */}
-        <div className="flex items-center gap-1.5">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <rect width="28" height="28" rx="6" fill="var(--accent-green)" />
-            <text x="14" y="20" textAnchor="middle" fill="white" fontSize="16" fontWeight="700" fontFamily="Inter">♞</text>
-          </svg>
+        <div className="flex items-center gap-2">
+          <div
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ background: 'var(--accent-green)' }}
+          >
+            <span className="text-white text-sm font-bold" style={{ lineHeight: 1 }}>♞</span>
+          </div>
           <span
-            className="text-base font-bold tracking-tight"
+            className="text-sm font-bold tracking-tight"
             style={{ color: 'var(--text-bright)' }}
           >
-            chess
+            ChessAI
           </span>
         </div>
 
         {/* Nav */}
-        <nav className="hidden md:flex items-center gap-1 ml-4">
-          {['Play', 'Puzzles', 'Learn'].map((item, i) => (
+        <nav className="hidden md:flex items-center gap-0.5 ml-3">
+          {['Play', 'Analysis', 'Learn'].map((item, i) => (
             <button
               key={item}
-              className="px-3 py-1.5 rounded text-xs font-semibold transition-colors"
+              className="px-3 py-1.5 rounded-md text-xs font-medium transition-colors"
               style={{
-                color: i === 0 ? 'var(--text-bright)' : 'var(--text-secondary)',
+                color: i === 0 ? 'var(--text-bright)' : 'var(--text-muted)',
                 background: i === 0 ? 'var(--bg-sidebar-alt)' : 'transparent',
                 border: 'none',
                 cursor: 'pointer',
@@ -41,18 +43,21 @@ export default function Header() {
         </nav>
       </div>
 
-      {/* Right side */}
+      {/* Right side — Online status */}
       <div className="flex items-center gap-3">
         <div
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium"
           style={{
-            background: 'rgba(129, 182, 76, 0.12)',
+            background: 'rgba(127, 186, 60, 0.1)',
             color: 'var(--accent-green)',
           }}
         >
           <span
             className="w-1.5 h-1.5 rounded-full"
-            style={{ background: 'var(--accent-green)', animation: 'pulse-dot 2s ease-in-out infinite' }}
+            style={{
+              background: 'var(--accent-green)',
+              animation: 'pulse-dot 2s ease-in-out infinite',
+            }}
           />
           Online
         </div>
