@@ -35,8 +35,8 @@ export default function ChessBoard({ position, onDrop, lastMove }) {
         squareStyles[move.to] = {
           ...squareStyles[move.to],
           background: isCapture
-            ? 'radial-gradient(circle, transparent 60%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.25) 75%, transparent 75%)'
-            : 'radial-gradient(circle, rgba(0,0,0,0.25) 18%, transparent 18%)',
+            ? 'radial-gradient(circle, transparent 65%, rgba(0,0,0,0.25) 65%, rgba(0,0,0,0.25) 78%, transparent 78%)'
+            : 'radial-gradient(circle, rgba(0,0,0,0.25) 12%, transparent 12%)',
           cursor: 'pointer',
         }
       })
