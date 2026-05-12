@@ -36,11 +36,9 @@ export default function SidePanel({
 
   return (
     <div
-      className="flex flex-col w-full lg:w-[320px]"
+      className="flex flex-col w-full h-full"
       style={{
         background: 'var(--bg-sidebar)',
-        borderRadius: '0 var(--radius-lg) var(--radius-lg) 0',
-        borderLeft: '1px solid var(--border-default)',
       }}
     >
       {/* ── Top bar ─────────────────────────────────── */}
@@ -150,15 +148,15 @@ export default function SidePanel({
 
       {/* ── Controls ───────────────────────────────────── */}
       <div
-        className="px-4 py-4 flex items-center gap-3"
-        style={{ borderTop: '1px solid var(--border-default)', background: 'var(--bg-sidebar)' }}
+        className="px-3 py-3 flex items-center gap-2"
+        style={{ borderTop: '1px solid var(--border-default)' }}
       >
         <button
-          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-md font-bold text-[15px] shadow-sm transition-transform active:scale-95 cursor-pointer hover:brightness-110"
-          style={{ background: 'var(--accent-green)', color: '#fff' }}
+          className="btn btn-primary flex-1 shadow-sm"
           onClick={onNewGame}
+          style={{ padding: '12px', fontSize: '14px' }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="23 4 23 10 17 10" />
             <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
           </svg>
