@@ -30,48 +30,42 @@ export default function ChessBoard({ position, onDrop, lastMove }) {
     setSelectedSquare(null)
   }, [position])
 
-  // Check if a square has a friendly piece (white, since player is always white)
-  const hasFriendlyPiece = useCallback((square) => {
+  // Check if a square has a friendly piece
+  const hasFriendlyPiece = useCallback((sq) => {
     try {
       const g = new Chess(position)
-      const piece = g.get(square)
+      const piece = g.get(sq)
       return piece && piece.color === g.turn()
-    } catch {
+    } catch (err) {
       return false
     }
   }, [position])
 
   // Shared click-to-move logic
-  const handleClickOnSquare = useCallback((square) => {
+  const handleClickOnSquare = useCallback((sq) => {
     if (processingClickRef.current) return
     processingClickRef.current = true
     requestAnimationFrame(() => { processingClickRef.current = false })
 
     if (selectedSquare) {
-      if (selectedSquare === square) {
-        // Same square — deselect
+      if (selectedSquare === sq) {
         setSelectedSquare(null)
         return
       }
-
-      // If clicking another friendly piece, switch selection instead of trying to move
-      if (hasFriendlyPiece(square)) {
-        setSelectedSquare(square)
+      // If clicking another friendly piece, switch selection
+      if (hasFriendlyPiece(sq)) {
+        setSelectedSquare(sq)
         return
       }
-
       // Try to move to the target square
-      const moveResult = onDrop(selectedSquare, square, null)
+      onDrop(selectedSquare, sq, null)
       setSelectedSquare(null)
-      if (moveResult) return
-
-      // Invalid move — deselect
       return
     }
 
     // First click — select only if it's a friendly piece
-    if (hasFriendlyPiece(square)) {
-      setSelectedSquare(square)
+    if (hasFriendlyPiece(sq)) {
+      setSelectedSquare(sq)
     }
   }, [selectedSquare, onDrop, hasFriendlyPiece])
 
