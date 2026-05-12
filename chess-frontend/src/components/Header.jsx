@@ -43,25 +43,6 @@ export default function Header() {
         </nav>
       </div>
 
-      {/* Right side — Online status */}
-      <div className="flex items-center gap-3">
-        <div
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium"
-          style={{
-            background: 'rgba(127, 186, 60, 0.1)',
-            color: 'var(--accent-green)',
-          }}
-        >
-          <span
-            className="w-1.5 h-1.5 rounded-full"
-            style={{
-              background: 'var(--accent-green)',
-              animation: 'pulse-dot 2s ease-in-out infinite',
-            }}
-          />
-          Online
-        </div>
-      </div>
     </header>
   )
 }
