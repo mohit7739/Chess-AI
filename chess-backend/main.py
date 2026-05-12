@@ -352,7 +352,8 @@ def find_best_move(board, max_depth=12):
         if not stop_search and cb:
             best=cb; best_s=cs
         elapsed=time.time()-search_start
-        print(f"  d{depth}: {best.uci() if best else '?'} ({best_s:.0f if best_s else 0}) [{nodes}n, {elapsed:.1f}s]")
+        score_str = f"{best_s:.0f}" if best_s is not None else "?"
+        print(f"  d{depth}: {best.uci() if best else '?'} ({score_str}) [{nodes}n, {elapsed:.1f}s]")
 
         # Stop conditions
         if best_s is not None and(best_s>29000 or best_s<-29000): break
