@@ -82,6 +82,12 @@ function App() {
       if (!res.ok) throw new Error(`API error: ${res.status}`)
 
       const data = await res.json()
+      if (data.error || !data.move) {
+        console.error('AI returned error:', data.error || 'no move')
+        setStatus('your-turn')
+        aiThinking.current = false
+        return
+      }
       const aiMove = data.move
 
       setGame((prev) => {
