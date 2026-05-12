@@ -3,7 +3,6 @@ import { Chess } from 'chess.js'
 import ChessBoard from './components/ChessBoard'
 import PlayerBar from './components/PlayerBar'
 import SidePanel from './components/SidePanel'
-import Header from './components/Header'
 
 // Use Vercel environment variable for production, or fallback to local backend
 const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/get-move'
@@ -202,13 +201,8 @@ function App() {
 
   return (
     <div className="min-h-screen flex" style={{ background: 'var(--bg-page)' }}>
-      {/* ── Left Sidebar (Header converted to vertical) ──────────────── */}
-      <div className="w-[140px] md:w-[200px] flex-shrink-0 border-r" style={{ background: 'var(--bg-sidebar)', borderColor: 'var(--border-default)' }}>
-        <Header />
-      </div>
-
       <main className="flex-1 flex items-center justify-center px-4 py-6 overflow-hidden">
-        <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 animate-slide-up w-full max-w-[1200px] justify-center">
+        <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 animate-slide-up w-full max-w-[1000px] justify-center">
 
           {/* ── Board Column ────────────────────────────── */}
           <div className="flex flex-col" style={{ width: '100%', maxWidth: '640px' }}>
