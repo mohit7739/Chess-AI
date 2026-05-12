@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { Chessboard } from 'react-chessboard'
+import { Chess } from 'chess.js'
 
 export default function ChessBoard({ position, onDrop, lastMove }) {
   const [selectedSquare, setSelectedSquare] = useState(null)
@@ -29,33 +30,50 @@ export default function ChessBoard({ position, onDrop, lastMove }) {
     setSelectedSquare(null)
   }, [position])
 
+  // Check if a square has a friendly piece (white, since player is always white)
+  const hasFriendlyPiece = useCallback((square) => {
+    try {
+      const g = new Chess(position)
+      const piece = g.get(square)
+      return piece && piece.color === g.turn()
+    } catch {
+      return false
+    }
+  }, [position])
+
   // Shared click-to-move logic
-  // onPieceClick fires first, then onSquareClick bubbles - we only process the first
   const handleClickOnSquare = useCallback((square) => {
     if (processingClickRef.current) return
     processingClickRef.current = true
-    // Reset at end of current event loop
     requestAnimationFrame(() => { processingClickRef.current = false })
 
     if (selectedSquare) {
-      if (selectedSquare !== square) {
-        const moveResult = onDrop(selectedSquare, square, null)
-        if (moveResult) {
-          setSelectedSquare(null)
-          return
-        } else {
-          // Invalid move (e.g. clicked own piece). Select the new piece.
-          setSelectedSquare(square)
-          return
-        }
+      if (selectedSquare === square) {
+        // Same square — deselect
+        setSelectedSquare(null)
+        return
       }
-      // Same square — deselect
+
+      // If clicking another friendly piece, switch selection instead of trying to move
+      if (hasFriendlyPiece(square)) {
+        setSelectedSquare(square)
+        return
+      }
+
+      // Try to move to the target square
+      const moveResult = onDrop(selectedSquare, square, null)
       setSelectedSquare(null)
+      if (moveResult) return
+
+      // Invalid move — deselect
       return
     }
-    // First click — select
-    setSelectedSquare(square)
-  }, [selectedSquare, onDrop])
+
+    // First click — select only if it's a friendly piece
+    if (hasFriendlyPiece(square)) {
+      setSelectedSquare(square)
+    }
+  }, [selectedSquare, onDrop, hasFriendlyPiece])
 
   return (
     <div style={{ width: '100%', aspectRatio: '1' }}>
