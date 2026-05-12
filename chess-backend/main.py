@@ -390,22 +390,122 @@ def get_book_move(b):
 class MoveRequest(BaseModel):
     fen: str
 
+# ─── Pondering (Pre-Think) System ─────────────────────────────────
+import threading
+
+ponder_lock = threading.Lock()
+ponder_result = {"fen": None, "predicted_opponent_move": None, "response_move": None, "score": None}
+ponder_thread = None
+
+def ponder_worker(board_fen, ai_move_uci):
+    """Background thread: predict opponent's best reply, then calculate our response."""
+    global ponder_result
+    try:
+        b = chess.Board(board_fen)
+        # Apply the AI move we just played
+        b.push(chess.Move.from_uci(ai_move_uci))
+
+        if b.is_game_over():
+            return
+
+        # Find opponent's most likely reply (search shallow & fast)
+        opp_move, _ = find_best_move(b, max_depth=6)
+        if opp_move is None:
+            return
+
+        # Now apply opponent's predicted move and find OUR response
+        b.push(opp_move)
+        if b.is_game_over():
+            return
+
+        # Check book first
+        book = get_book_move(b)
+        if book:
+            with ponder_lock:
+                ponder_result = {
+                    "fen": b.fen(),
+                    "predicted_opponent_move": opp_move.uci(),
+                    "response_move": book,
+                    "score": None
+                }
+            print(f"🔮 Ponder: if opponent plays {opp_move.uci()}, reply {book} (book)")
+            return
+
+        our_move, our_score = find_best_move(b, max_depth=8)
+        if our_move:
+            with ponder_lock:
+                ponder_result = {
+                    "fen": b.fen(),
+                    "predicted_opponent_move": opp_move.uci(),
+                    "response_move": our_move.uci(),
+                    "score": our_score
+                }
+            print(f"🔮 Ponder: if opponent plays {opp_move.uci()}, reply {our_move.uci()} ({our_score:.0f})")
+    except Exception as e:
+        print(f"🔮 Ponder error: {e}")
+
+def start_pondering(board_fen, ai_move_uci):
+    """Start pondering in background after AI makes a move."""
+    global ponder_thread, ponder_result
+    with ponder_lock:
+        ponder_result = {"fen": None, "predicted_opponent_move": None, "response_move": None, "score": None}
+    ponder_thread = threading.Thread(target=ponder_worker, args=(board_fen, ai_move_uci), daemon=True)
+    ponder_thread.start()
+
+def check_ponder_hit(current_fen):
+    """Check if the current position matches our ponder prediction."""
+    with ponder_lock:
+        if ponder_result["fen"] and ponder_result["fen"] == current_fen and ponder_result["response_move"]:
+            return ponder_result["response_move"], ponder_result["score"]
+    return None, None
+
 @app.post("/api/get-move")
 async def get_move(req: MoveRequest):
     try:
-        b=chess.Board(req.fen)
-        if b.is_game_over(): return{"error":"Game over"}
-        bm=get_book_move(b)
+        b = chess.Board(req.fen)
+        if b.is_game_over():
+            return {"error": "Game over"}
+
+        # Check if we pre-computed this position (ponder hit!)
+        ponder_move, ponder_score = check_ponder_hit(req.fen)
+        if ponder_move:
+            # Verify it's still legal
+            legal_ucis = [m.uci() for m in b.legal_moves]
+            if ponder_move in legal_ucis:
+                print(f"⚡ Ponder hit! Instant reply: {ponder_move}")
+                start_pondering(req.fen, ponder_move)
+                return {"move": ponder_move, "score": round(ponder_score, 1) if ponder_score else None, "source": "ponder"}
+
+        # Try opening book
+        bm = get_book_move(b)
         if bm:
-            print(f"📖 {bm}"); return{"move":bm,"source":"book"}
+            print(f"📖 {bm}")
+            start_pondering(req.fen, bm)
+            return {"move": bm, "source": "book"}
+
+        # Full search
         print("🤔 Thinking...")
-        mv,sc=find_best_move(b)
-        if mv is None: return{"error":"No moves"}
+        mv, sc = find_best_move(b)
+        if mv is None:
+            return {"error": "No moves"}
+
         print(f"✅ {mv.uci()} ({sc:.0f})")
-        return{"move":mv.uci(),"score":round(sc,1),"source":"engine"}
+        # Start pondering our next move while human thinks
+        start_pondering(req.fen, mv.uci())
+        return {"move": mv.uci(), "score": round(sc, 1), "source": "engine"}
     except Exception as e:
-        print(f"❌ {e}"); return{"error":str(e)}
+        print(f"❌ {e}")
+        return {"error": str(e)}
 
 @app.get("/")
 async def root():
-    return{"status":"Chess AI v3.0 — Maximum Strength","features":["Depth 20 iterative deepening","PVS + LMR + Null-move","Check/pawn extensions","Quiescence with delta pruning","History heuristic","Repetition avoidance","50-move rule","Passed pawns + Outposts"]}
+    return {"status": "Chess AI v3.1 — Maximum Strength + Pondering", "features": [
+        "Depth 12 iterative deepening with 10s time limit",
+        "PVS + LMR + Null-move pruning",
+        "Check/pawn extensions",
+        "Quiescence with delta pruning",
+        "History heuristic + killer moves",
+        "Repetition avoidance + 50-move rule",
+        "Pondering (pre-think while human is thinking)",
+        "Opening book"
+    ]}
